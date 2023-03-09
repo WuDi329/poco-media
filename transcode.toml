@@ -13,12 +13,12 @@
         # bit rate
         "-b",
         "%b",
-        # video codec
+        # video codec 这里先写死vp9
         "-vcodec",
-        "%vcodec",
-        # audio codec
+        "libvpx-vp9",
+        # audio codec 这里先写死opus
         "-acodec",
-        "%acodec",
+        "opus",
         # 默认命名为output.webm
         "output.webm"
     ]

@@ -41,7 +41,33 @@ impl FFmpeg {
     pub async fn transcode(&self, file: &str, mut sender: Sender) {
         let args = self
         .build_args()
-        .with()
+        .with("i",file)
+        // 这里需要根据传入视频的自身设置确定其分辨率
+        .with("s", "1920x1080")
+        // 这里同样需要根据传入视频的bitrate确定转码后的bitreate
+        .with("b", "1000000")
+        .build();
+
+        // 此处执行完成会获得完整的转码结果
+        let mut cmd = Command::new(&self.config.bin)
+            .args(&args)
+            .stdout(Stdio::piped())
+            .spawn()
+            .unwrap();
+
+        let mut buf: [u8; 65536] = [0; 65536];
+
+        let mut stdout = BufReader::new(cmd.stdout.as_mut().unwrap());
+
+        while let Ok(()) = stdout.read_exact(&mut buf) {
+            let b = Bytes::copy_from_slice(&buf);
+            sender.send_data(b).await.unwrap();
+            buf = [0; 65536];
+        }
+
+        let status = cmd.wait();
+        println!("exited with status {:?}", status);
+
     }
 
     // 构造config
