@@ -1,0 +1,24 @@
+[ffmpeg]
+  bin = "ffmpeg"
+
+[ffmpeg.codecs]
+  [ffmpeg.codecs."*"]
+    args = [
+        # 文件名
+        "-i",
+        "%i",
+        # 分辨率
+        "-s",
+        "%s",
+        # bit rate
+        "-b",
+        "%b",
+        # video codec
+        "-vcodec",
+        "%vcodec",
+        # audio codec
+        "-acodec",
+        "%acodec",
+        # 默认命名为output.webm
+        "output.webm"
+    ]
