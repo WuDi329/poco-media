@@ -2,7 +2,10 @@ use hyper::{header, Body, Response, StatusCode};
 use crate::config::{Config, self};
 use crate::ffmpeg::FFmpeg;
 use std::sync::Arc;
+use serde_json::{to_string};
 
+// 宏看起来和函数很像，只不过名称末尾有一个感叹号 ! 。宏并不产生函数调用，而是展开成源码，并和程序的其余部分一起被编译。
+// 这一部分定义了json 宏，配置允许跨域
 macro_rules! json {
     ($x:expr) => {
         match serde_json::to_string($x) {
