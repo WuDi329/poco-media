@@ -23,6 +23,7 @@ macro_rules! json {
     };
 }
 
+// 这里的参数需要针对具体情况进行修改
 pub async fn get_stream(
     // db目前没有作用先删除
     // db: SharedDb,
@@ -39,7 +40,7 @@ pub async fn get_stream(
 
     // 开启新的线程调用ffmpeg下的transcode方法
     tokio::spawn(async move {
-        ffmpeg.transcode("h264.mkv", tx).await;
+        ffmpeg.transcode("rabbit.mkv", tx).await;
     });
 
     // 构建给前端的返回值，返回值包含了body，body在主线程中接收来自新线程转码后的结果

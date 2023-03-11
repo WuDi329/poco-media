@@ -43,9 +43,10 @@ impl FFmpeg {
         .build_args()
         .with("i",file)
         // 这里需要根据传入视频的自身设置确定其分辨率
-        .with("s", "1920x1080")
+        .with("s", "720x1080")
         // 这里同样需要根据传入视频的bitrate确定转码后的bitreate
-        .with("b", "1000000")
+        .with("b:v", "1725000")
+        .with("b:a", "137000")
         .build();
 
         // 此处执行完成会获得完整的转码结果

@@ -1,40 +1,49 @@
 mod config;
 mod ffmpeg;
 mod api;
+mod context;
 
 // use std::convert::Infallible;
 // 为了让一个地方注解不出问题
 use hyper::body::HttpBody;
+use crate::context::Context;
+use crate::config::Config;
 use std::net::SocketAddr;
 use hyper::{Body, Request, Response, Server, StatusCode, Method};
 use hyper::service::{make_service_fn, service_fn};
 use futures::TryStreamExt as _;
+use crate::api::MakeApiSvc;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
+
+
+    let ctx = Context::from_config(Config::new());
+
+    let config  = ctx.cfg();
     // 绑定端口 3000
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
 
     // service 将会被使用在每一个connection中，所以需要创建一个
-    let make_svc = make_service_fn(|_conn| async {
-        // service_fn将自己的程序转化成一个service
-        Ok::<_, hyper::Error>(service_fn(hello_world))
-    });
+    // let make_svc = make_service_fn(|_conn| async {
+    //     // service_fn将自己的程序转化成一个service
+    //     Ok::<_, hyper::Error>(service_fn(api::handler::get_stream))
+    // });
 
-    let server = Server::bind(&addr).serve(make_svc);
+    let server = Server::bind(&addr).serve(MakeApiSvc::new(config));
 
      // And now add a graceful shutdown signal...
-     let graceful = server.with_graceful_shutdown(shutdown_signal());
+    //  let graceful = server.with_graceful_shutdown(shutdown_signal());
 
-     if let Err(e) = graceful.await {
-        eprintln!("server error: {}", e);
-    }
+    //  if let Err(e) = graceful.await {
+    //     eprintln!("server error: {}", e);
+    // }
 
     println!("listening on http://{}", addr);
 
     // 如果使用graceful的话，最后不能再使用server、
 
-    // server.await?;
+    server.await?;
 
     Ok(())
 }
@@ -46,6 +55,7 @@ async fn hello_world(req: Request<Body>) -> Result<Response<Body>, hyper::Error>
     // Body 可以看出它是由静态字符串组成的，
     // 并且自动为我们添加一个 Content-Length 头
     // Ok(Response::new("hello world".into()))
+    println!("{:?}", req);
 
     let mut response = Response::new(Body::empty());
 

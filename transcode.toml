@@ -11,14 +11,18 @@
         "-s",
         "%s",
         # bit rate
-        "-b",
-        "%b",
+        "-b:v",
+        "%b:v",
+        "-b:a",
+        "%b:a",
         # video codec 这里先写死vp9
         "-vcodec",
         "libvpx-vp9",
         # audio codec 这里先写死opus
         "-acodec",
         "opus",
+        "-strict",
+        "-2",
         # 默认命名为output.webm
         "output.webm"
     ]
