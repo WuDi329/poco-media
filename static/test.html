@@ -7,13 +7,18 @@
         <script language="javascript" type="text/javascript" src="js/player.js"></script>
     </head>
     <body>
-        <video id="video" src="http://localhost:3000/stream/1" controls autoplay></video>
+        <!-- <video id="video" src="http://localhost:3000/stream/1" controls autoplay></video> -->
         <button onclick="downloadVideo()">download</button>
     </body>
 
     <script  type="application/javascript">
-        function downloadVideo(){
-            console.log('test');
+        async function downloadVideo(){
+            // 收集后端传来的数据，并且返回
+            // 获得video
+            console.log("读取中...");
+            var video = await fetch("http://localhost:3000/stream/1");
+            console.log("获取完成");
+            console.log(video);
         }
     </script>
 </html>

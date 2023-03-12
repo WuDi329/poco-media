@@ -44,6 +44,7 @@ impl FFmpeg {
         .with("i",file)
         // 这里需要根据传入视频的自身设置确定其分辨率
         .with("s", "720x1080")
+        .with("f", "webm")
         // 这里同样需要根据传入视频的bitrate确定转码后的bitreate
         .with("b:v", "1725000")
         .with("b:a", "137000")
@@ -61,8 +62,11 @@ impl FFmpeg {
         let mut stdout = BufReader::new(cmd.stdout.as_mut().unwrap());
 
         while let Ok(()) = stdout.read_exact(&mut buf) {
+             // copy_from_slice将数据从buf复制到b中
             let b = Bytes::copy_from_slice(&buf);
+             // sender发送chunk（包含b）给
             sender.send_data(b).await.unwrap();
+            // 重新让buf填充为0
             buf = [0; 65536];
         }
 
@@ -77,7 +81,7 @@ impl FFmpeg {
         let args = self
             .config
             .codecs
-            .get("*")
+            .get("net")
             .unwrap()
             .args
             .iter()
